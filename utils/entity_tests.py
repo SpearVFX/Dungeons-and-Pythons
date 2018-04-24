@@ -1,6 +1,7 @@
 import unittest
-from Entity import Entity
-
+from entity import Entity
+from weapon import Weapon
+from spell import Spell
 
 class EntityUnitTest(unittest.TestCase):
     def setUp(self):
@@ -33,6 +34,16 @@ class EntityUnitTest(unittest.TestCase):
     
     def test_can_cast_returns_true(self):
         self.assertTrue(self.dummy.can_cast())
+    
+    def test_equip_method(self):
+        weapon = Weapon(name = "Gorehowl", damage = 20)
+        self.dummy.equip(weapon)
+        self.assertEqual(self.dummy.get_weapon(), str(weapon))
+
+    def test_learn_method(self):
+        spell = Spell(name = "Pyroblast", damage = 40, manaCost= 30, castRange = 1)
+        self.dummy.learn(spell)
+        self.assertEqual(self.dummy.get_spell(), str(spell))
 
 if __name__ == "__main__":
     unittest.main()
