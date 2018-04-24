@@ -1,5 +1,6 @@
 from weapon import Weapon
-
+from spell import Spell
+from arsenal import Arsenal
 
 class Entity:
     def __init__(self, *, name = None, health = 0, mana = 0):
@@ -12,11 +13,14 @@ class Entity:
         self.__currMana = self.__maxMana
 
         self.__attackPoints = 0
-        self.__weapon = None
-        self.__spell = None
+        self.__arsenal = Arsenal()
 
     def equip(self, weapon):
-        
+        self.__arsenal.equip_weapon(weapon)
+
+    def learn(self, spell):
+        self.__arsenal.learn_spell(spell)
+
     '''Returns the amount of health gained after an event has occured.'''
     def __calculate_health_gain(self, health = 0):
         if self.__currHealth + health <= self.__maxHealth:
@@ -57,3 +61,7 @@ class Entity:
         return self.__currMana
     def get_name(self):
         return self.__name
+    def get_weapon(self):
+        return self.__arsenal.get_weapon()
+    def get_spell(self):
+        return self.__arsenal.get_spell()
