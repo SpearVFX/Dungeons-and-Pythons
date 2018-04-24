@@ -1,11 +1,22 @@
+from weapon import Weapon
+
+
 class Entity:
     def __init__(self, *, name = None, health = 0, mana = 0):
         self.__name = name
+        
         self.__maxHealth = health
         self.__maxMana = mana
+        
         self.__currHealth = self.__maxHealth
         self.__currMana = self.__maxMana
 
+        self.__attackPoints = 0
+        self.__weapon = None
+        self.__spell = None
+
+    def equip(self, weapon):
+        
     '''Returns the amount of health gained after an event has occured.'''
     def __calculate_health_gain(self, health = 0):
         if self.__currHealth + health <= self.__maxHealth:
