@@ -12,14 +12,22 @@ class Entity:
         self.__currHealth = self.__maxHealth
         self.__currMana = self.__maxMana
 
-        self.__attackPoints = 0
         self.__arsenal = Arsenal()
 
+    
     def equip(self, weapon):
         self.__arsenal.equip_weapon(weapon)
 
     def learn(self, spell):
         self.__arsenal.learn_spell(spell)
+
+    def attack(self, *, by = ""):
+        if by == "weapon":
+            return self.__arsenal.get_weapon().get_damage()
+        elif by == "spell":
+            return self.__arsenal.get_spell().get_damage()
+        else:
+            raise ValueError(f'Argument- by can only have these values: weapon, spell.\n')
 
     '''Returns the amount of health gained after an event has occured.'''
     def __calculate_health_gain(self, health = 0):
@@ -52,7 +60,10 @@ class Entity:
 
     ''' Checks if the Entity has enough mana to cast. '''
     def can_cast(self):
-        return True if self.__currMana else False
+        if (self.__currMana - self.__arsenal.get_spell().get_manaCost()) >=0:
+            return True
+        else
+            return False
 
     ''' Getter methods '''
     def get_health(self):
