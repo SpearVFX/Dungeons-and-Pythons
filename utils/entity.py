@@ -16,10 +16,10 @@ class Entity:
 
     
     def equip(self, weapon):
-        self.__arsenal.equip_weapon(weapon)
+        self.__arsenal.equip_weapon(weapon = weapon)
 
     def learn(self, spell):
-        self.__arsenal.learn_spell(spell)
+        self.__arsenal.learn_spell(spell = spell)
 
     def attack(self, *, by = ""):
         if by == "weapon":
@@ -62,7 +62,7 @@ class Entity:
     def can_cast(self):
         if (self.__currMana - self.__arsenal.get_spell().get_manaCost()) >=0:
             return True
-        else
+        else:
             return False
 
     ''' Getter methods '''
