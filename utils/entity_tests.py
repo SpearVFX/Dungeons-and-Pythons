@@ -38,7 +38,6 @@ class EntityUnitTest(unittest.TestCase):
         self.assertTrue(self.dummy.can_cast())
     
     def test_equip_method(self):
-        weapon = Weapon(name = "Gorehowl", damage = 20)
         self.dummy.equip(weapon = self.weapon)
         self.assertEqual(str(self.dummy.get_weapon()), str(self.weapon))
 
