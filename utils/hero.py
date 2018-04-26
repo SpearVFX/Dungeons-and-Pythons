@@ -1,6 +1,4 @@
 from entity import Entity
-from weapon import Weapon
-from spell import Spell
 
 
 class Hero(Entity):
