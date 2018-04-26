@@ -1,4 +1,7 @@
 from entity import Entity
+from weapon import Weapon
+from spell import Spell
+
 
 class Hero(Entity):
     def __init__(self, name="", title="", health=100,
