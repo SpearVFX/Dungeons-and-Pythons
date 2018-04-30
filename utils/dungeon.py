@@ -1,11 +1,25 @@
 
+defaultFileDir = 'dungeon_maps/level_1/'
+defaultMapFileName = 'map.txt'
+
 class Dungeon:
-    def __init__(self, *, fileName=""):
-        self.__fileName = fileName
+    def __init__(self, *, fileDir=defaultFileDir):
+
+        self.__fileName = ''
+        self.open_map(fileDir= fileDir)
+
         self.__dungeonLayout = []
         self.__heroCoords = [0,0]
-        self.__get_dungeon_layout()
+        
+        self.__current_tile = '.'
     
+    """
+        Sets the fileName attribute to the passed in one. 
+    """
+    def open_map(self,*, fileDir= defaultFileDir):
+        self.__fileName = fileDir + defaultMapFileName
+        self.__get_dungeon_layout()
+
     """ 
         Extracts the dungeon map from the input file.
     """
@@ -18,6 +32,7 @@ class Dungeon:
         and stores in into the dungeonLayout attribute.
     """
     def __get_dungeon_layout(self):
+        self.__dungeonLayout = []
         with open(self.__fileName, 'r') as file:
             self.__extract_dugeon_data(file) 
 
@@ -69,19 +84,49 @@ class Dungeon:
             and (self.__heroCoords[1] + stepY >= 0 and self.__heroCoords[1] + stepY < width)\
             and (self.__dungeonLayout[self.__heroCoords[0] + stepX][self.__heroCoords[1] + stepY] != '#'))
 
-    """ Returns the character at given coordinates. """
+    """ 
+        Returns the tile at given coordinates.
+    """
     def __get_tile_at_coords(self,x,y):
         return self.__dungeonLayout[x][y]
 
     """
+        Updates the tile at (x,y) with the given tile. 
+    """
+    def __update_tile(self,x,y,tile):
+        self.__dungeonLayout[x][y] = tile
+
+    """ 
+        This will move the character to the requessted direction 
+        saving the tile that will be overriden.
+    """
+    def __move(self, x, y, tile):
+        self.__update_tile(self.__heroCoords[0],
+                          self.__heroCoords[1],
+                         self.__current_tile)
+            
+        self.__current_tile = tile
+
+        self.__heroCoords[0] += x
+        self.__heroCoords[1] += y
+
+        self.__update_tile(self.__heroCoords[0],
+                          self.__heroCoords[1],
+                         'H')
+        
+        
+    """ 
         Moves the hero either up, down, left or right if possible.
     """
     def move_hero(self,*, direction):
 
+        stepX = 0
+        stepY = 0
+
         if direction == 'up':            
-            stepX = 1
-        elif direction == 'down':
             stepX = -1
+        elif direction == 'down':
+            stepX = 1
         elif direction == 'left':
             stepY = -1
         elif direction == 'right':
@@ -90,7 +135,7 @@ class Dungeon:
         if(self.__is_valid_move(stepX, stepY)):
             tile = self.__get_tile_at_coords(self.__heroCoords[0] + stepX, self.__heroCoords[1] + stepY)
             if tile == 'E':
-                #initialte fight
+                #initiate fight
                 pass
             elif tile == 'T':
                 #find treasure
@@ -99,8 +144,11 @@ class Dungeon:
                 #finish level
                 pass
             else:
-                #do nothing
+                self.__move(stepX, stepY,tile)
                 pass
+            return True
+        
+        return False
 
     def get_dungeon_layout(self):
         return self.__dungeonLayout
