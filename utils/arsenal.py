@@ -3,7 +3,7 @@ from spell import Spell
 
 class Arsenal:
 
-    def __init__(self,*, weapon = Weapon(), spell = Spell()):
+    def __init__(self,*, weapon =None, spell =None):
         self.__weapon = weapon
         self.__spell = spell
     
