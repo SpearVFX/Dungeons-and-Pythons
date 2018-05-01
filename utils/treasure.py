@@ -7,14 +7,16 @@ defaultTreasureFileName = 'treasures.json'
 class Treasure:
     
     def __init__(self, *, filePath):
-        self.__fileName = filePath
+        self.__fileName = filePath + defaultTreasureFileName
         self.__elements = {}
+        self.__get_elements()
     
     def __get_elements(self):
-        self.__elements = json.load(self.__fileName)
+        with open(self.__fileName,'r') as treasures:
+            self.__elements = json.load(treasures)
 
     def open_file(self, *, filePath):
-        self.__filePath = filePath + defaultTreasureFileName
+        self.__fileName = filePath + defaultTreasureFileName
         self.__get_elements()
 
     def pick_one(self):
@@ -23,12 +25,13 @@ class Treasure:
         
         if dice == len(self.__elements):
             return None
-        
+                
         lootPool = list(self.__elements)[dice]
-
-        dice = random.randint(0,len(lootPool)-1)
+        poolType = lootPool
         
-        return lootPool[dice]
+        dice = random.randint(0,len(self.__elements[lootPool])-1)
+        return (poolType, self.__elements[lootPool][dice])
+
 
 
 
