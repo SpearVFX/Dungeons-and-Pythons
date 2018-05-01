@@ -1,23 +1,31 @@
+from treasure import Treasure
+from weapon import Weapon
+from spell import Spell
+import hero
+import pdb
 
-defaultFileDir = 'dungeon_maps/level_1/'
-defaultMapFileName = 'map.txt'
+DEFAULT_FILE_DIR = 'dungeon_maps/level_1/'
+DEFAULT_MAP_FILE_NAME = 'map.txt'
+DEFAULT_TILE = '.'
 
 class Dungeon:
-    def __init__(self, *, fileDir=defaultFileDir):
+    def __init__(self, *, fileDir=DEFAULT_FILE_DIR):
 
         self.__fileName = ''
-        self.open_map(fileDir= fileDir)
-
         self.__dungeonLayout = []
+
+        self.open_map(fileDir= fileDir)
+        self.__treasure = Treasure(filePath = fileDir)
+
+        self.__hero = None
         self.__heroCoords = [0,0]
-        
-        self.__current_tile = '.'
+        self.__current_tile = DEFAULT_TILE
     
     """
         Sets the fileName attribute to the passed in one. 
     """
-    def open_map(self,*, fileDir= defaultFileDir):
-        self.__fileName = fileDir + defaultMapFileName
+    def open_map(self,*, fileDir= DEFAULT_FILE_DIR):
+        self.__fileName = fileDir + DEFAULT_MAP_FILE_NAME
         self.__get_dungeon_layout()
 
     """ 
@@ -63,10 +71,11 @@ class Dungeon:
     """
         Overwrites the first spawn location found with the H symbol. 
     """
-    def spawn(self):
+    def spawn(self,*, hero):
         
         locationCoords = self.__find_spawn_location()
         if locationCoords is not None:
+            self.__hero = hero
             self.__heroCoords = list(locationCoords)
             self.__overwrite_spawn_location()
             return True
@@ -113,8 +122,49 @@ class Dungeon:
         self.__update_tile(self.__heroCoords[0],
                           self.__heroCoords[1],
                          'H')
+    
+    def __promt_arsenal_update(self,item):
+        print(item)
+        command =input(f'Would you like to change your current arsenal?:\
+                        \n{self.__hero.get_weapon()}\
+                        \n{self.__hero.get_spell()}\
+                        \n Input Y or N:')
+        if command is 'Y':
+            return True
         
+        return False
+    
+    def __loot_treasure(self):
+        item = self.__treasure.pick_one()
+
+        if item == None:
+            print('The chest was empty.')
+            return
         
+        print(f'You\'ve looted a {item[0]}.\n')
+
+        if item[0] == 'potion':
+            if(item[1]['name'] == 'Mana'):
+                self.__hero.take_mana(item[1]['amount'])
+            else:
+                self.__hero.take_healing(item[1]['amount'])
+
+        else:
+            command = (self.__promt_arsenal_update(item))
+            if command == True:
+                if item[0] == 'weapon':
+
+                    weapon = Weapon(name=item[1]['name'],
+                    damage=item[1]['damage'])
+                    self.__hero.equip(weapon)
+
+                elif item[0] == 'spell':
+                    spell = Spell(name=item[1]['name'],
+                                    damage=item[1]['damage'],
+                                    manaCost=item[1]['manaCost'],
+                                    castRange=item[1]['range'])
+                    self.__hero.learn(spell)
+            
     """ 
         Moves the hero either up, down, left or right if possible.
     """
@@ -138,14 +188,14 @@ class Dungeon:
                 #initiate fight
                 pass
             elif tile == 'T':
-                #find treasure
-                pass
+                self.__loot_treasure()
+                tile = DEFAULT_TILE
             elif tile == 'G':
                 #finish level
                 pass
-            else:
-                self.__move(stepX, stepY,tile)
-                pass
+            
+            self.__move(stepX, stepY,tile)
+            pass
             return True
         
         return False
@@ -155,3 +205,6 @@ class Dungeon:
     
     def get_hero_coordinates(self):
         return self.__heroCoords
+
+    def get_hero(self):
+        return self.__hero
