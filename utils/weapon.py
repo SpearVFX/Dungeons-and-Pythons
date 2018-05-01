@@ -4,7 +4,7 @@ class Weapon:
         self.__damage = damage
 
     def __str__(self):
-        return self.__name
+        return f'{self.__name}, damage = {self.__damage}.'
 
     def get_damage(self):
         return self.__damage

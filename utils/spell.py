@@ -7,7 +7,7 @@ class Spell:
         self.__castRange = castRange # if cast range is 1 you can attack enemies next you.
 
     def __str__(self):
-        return self.__name
+        return f'{self.__name}, damage: {self.__damage}, cost: {self.__manaCost}, range: {self.__castRange}.'
 
     def get_damage(self):
         return self.__damage
