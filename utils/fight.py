@@ -25,8 +25,14 @@ class Fight:
                 initiate_attack(self.hero, self.enemy)
             else:
                 initiate_attack(self.enemy, self.hero)
-
-        pass
+            if not self.hero.is_alive():
+                print f'{self.hero.known_as()} is dead.'
+                both_alive = False
+            elif not self.enemy.is_alive():
+                print f'Enemy is dead.'
+                both_alive = False
+            fight_turn = not fight_turn #  switch turns
+        return
 
     @staticmethod
     def attack(fighter1, fighter2):
