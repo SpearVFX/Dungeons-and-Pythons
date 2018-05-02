@@ -46,7 +46,7 @@ class Entity:
             return mana
         else:
             return self.__maxMana - self.__currMana
-""" Pichki michki """
+
     '''Current stats modifier methods.'''
 
     def take_damage(self, damage=0):
