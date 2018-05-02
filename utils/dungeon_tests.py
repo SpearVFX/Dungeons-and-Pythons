@@ -1,6 +1,7 @@
 import unittest
 from dungeon import Dungeon
 from hero import Hero
+import pdb
 
 plainMapDir = 'dungeon_maps/test_maps/plain_map/'
 validMapDir = 'dungeon_maps/level_1/'
@@ -26,7 +27,6 @@ class DungeonTests(unittest.TestCase):
             self.dummy.open_map(fileDir=plainMapDir)
             self.dummy.spawn(hero=self.hero)
             self.dummy.move_hero(direction='up')
-
             self.assertAlmostEqual(
                 self.dummy.get_dungeon_layout()[0][1],
                 'H'
@@ -36,7 +36,6 @@ class DungeonTests(unittest.TestCase):
             self.dummy.open_map(fileDir=plainMapDir)
             self.dummy.spawn(hero=self.hero)
             self.dummy.move_hero(direction='down')
-
             self.assertEqual(
                 self.dummy.get_dungeon_layout()[2][1],
                 'H'
