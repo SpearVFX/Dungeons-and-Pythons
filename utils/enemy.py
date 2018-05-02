@@ -1,7 +1,8 @@
 from entity import Entity
 
+
 class Enemy(Entity):
-    def __init__(self,*,health=100, mana=100, damage=20):
+    def __init__(self, *, health=100, mana=100, damage=20):
         super().__init__(health=health, mana=mana)
         self.__baseDamage = damage
 
