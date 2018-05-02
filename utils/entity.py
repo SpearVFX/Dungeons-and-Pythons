@@ -6,6 +6,7 @@ from arsenal import Arsenal
 class Entity:
     def __init__(self, *, name=None, health=0, mana=0):
         self.__name = name
+        self.coordinates = (0,0)
 
         self.__maxHealth = health
         self.__maxMana = mana
@@ -86,3 +87,9 @@ class Entity:
 
     def get_spell(self):
         return self.__arsenal.get_spell()
+
+    def set_coords(self,*, x, y):
+        self.coordinates = (x,y)
+
+    def get_coords(self):
+        return self.coordinates

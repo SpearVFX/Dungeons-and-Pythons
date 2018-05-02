@@ -19,7 +19,7 @@ class Dungeon:
         self.__treasure = Treasure(filePath=fileDir)
 
         self.__hero = None
-        self.__heroCoords = [0, 0]
+
         self.__current_tile = DEFAULT_TILE
 
     """
@@ -75,8 +75,10 @@ class Dungeon:
         by the __find_spawn_location method.
     """
 
-    def __overwrite_spawn_location(self):
-        self.__dungeonLayout[self.__heroCoords[0]][self.__heroCoords[1]] = 'H'
+    def __overwrite_spawn_location(self, *,coordinates):
+        self.__hero.set_coords(x = coordinates[0], y = coordinates[1])
+        heroCoords = self.__hero.get_coords()
+        self.__dungeonLayout[heroCoords[0]][heroCoords[1]] = 'H'
 
     """
         Overwrites the first spawn location found with the H symbol.
@@ -87,8 +89,7 @@ class Dungeon:
         locationCoords = self.__find_spawn_location()
         if locationCoords is not None:
             self.__hero = hero
-            self.__heroCoords = list(locationCoords)
-            self.__overwrite_spawn_location()
+            self.__overwrite_spawn_location(coordinates = locationCoords)
             return True
 
         return False
@@ -98,16 +99,18 @@ class Dungeon:
     """
 
     def __is_valid_move(self, stepX, stepY):
+        coords = self.__hero.get_coords()
         height = len(self.__dungeonLayout)
-        width = len(self.__dungeonLayout[self.__heroCoords[0]])
+        width = len(self.__dungeonLayout[coords[0]])
 
-        nX = self.__heroCoords[0] + stepX
-        nY = self.__heroCoords[1] + stepY
-        return ((self.__heroCoords[0] + stepX >= 0 and
-                 self.__heroCoords[0] + stepX < height) and
-                (self.__heroCoords[1] + stepY >= 0 and
-                 self.__heroCoords[1] + stepY < width) and
-                (self.__dungeonLayout[nX][nY] != '#'))
+        nX = coords[0] + stepX
+        nY = coords[1] + stepY
+
+        return (
+                (nX>= 0 and nX < height) and
+                (nY>= 0 and nY< width) and
+                (self.__dungeonLayout[nX][nY] != '#')
+               )
 
     """
         Returns the tile at given coordinates.
@@ -129,17 +132,19 @@ class Dungeon:
     """
 
     def __move(self, x, y, tile):
-        self.__update_tile(self.__heroCoords[0],
-                           self.__heroCoords[1],
+        coords = self.__hero.get_coords()
+        self.__update_tile(coords[0],
+                           coords[1],
                            self.__current_tile)
 
         self.__current_tile = tile
 
-        self.__heroCoords[0] += x
-        self.__heroCoords[1] += y
+        self.__hero.set_coords(x = coords[0] + x, y = coords[0] + y)
 
-        self.__update_tile(self.__heroCoords[0],
-                           self.__heroCoords[1],
+        coords = self.__hero.get_coords()
+
+        self.__update_tile(coords[0],
+                           coords[1],
                            'H')
 
     def __promt_arsenal_update(self, item):
@@ -202,10 +207,12 @@ class Dungeon:
         elif direction == 'right':
             stepY = 1
 
+        coords = self.__hero.get_coords()
+
         if(self.__is_valid_move(stepX, stepY)):
             tile = self.__get_tile_at_coords(
-                self.__heroCoords[0] + stepX,
-                self.__heroCoords[1] + stepY)
+                coords[0] + stepX,
+                coords[1] + stepY)
             if tile == 'E':
                 # initiate fight
                 pass
@@ -226,7 +233,7 @@ class Dungeon:
         return self.__dungeonLayout
 
     def get_hero_coordinates(self):
-        return self.__heroCoords
+        return self.__hero.get_coords()
 
     def get_hero(self):
         return self.__hero
