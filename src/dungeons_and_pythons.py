@@ -1,5 +1,5 @@
-import dungeon
-import hero
+import dungeon as dungeon
+import hero as hero
 
 treasure_map = 'dungeon_maps/test_maps/treasure_map/'
 

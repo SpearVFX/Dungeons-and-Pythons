@@ -1,8 +1,8 @@
 import unittest
 
-from arsenal import Arsenal
-from weapon import Weapon
-from spell import Spell
+from src.arsenal import Arsenal
+from src.weapon import Weapon
+from src.spell import Spell
 
 
 class ArsenalUnitTests(unittest.TestCase):

@@ -1,10 +1,10 @@
 import unittest
-from dungeon import Dungeon
-from hero import Hero
+from src.dungeon import Dungeon
+from src.hero import Hero
 import pdb
 
-plainMapDir = 'dungeon_maps/test_maps/plain_map/'
-validMapDir = 'dungeon_maps/level_1/'
+plainMapDir = 'src/dungeon_maps/test_maps/plain_map/'
+validMapDir = 'src/dungeon_maps/level_1/'
 
 
 class DungeonTests(unittest.TestCase):

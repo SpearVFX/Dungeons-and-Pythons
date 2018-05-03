@@ -1,6 +1,6 @@
 import unittest
 
-from enemy import Enemy
+from src.enemy import Enemy
 
 
 class EnemyTests(unittest.TestCase):
