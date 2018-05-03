@@ -1,7 +1,7 @@
 import unittest
-from entity import Entity
-from weapon import Weapon
-from spell import Spell
+from src.entity import Entity
+from src.weapon import Weapon
+from src.spell import Spell
 
 
 class EntityUnitTest(unittest.TestCase):
@@ -40,6 +40,7 @@ class EntityUnitTest(unittest.TestCase):
             self.assertEqual(self.dummy.get_health(), 150)
 
     def test_can_cast_returns_true(self):
+        self.dummy.learn(self.spell)
         self.assertTrue(self.dummy.can_cast())
 
     def test_equip_method(self):

@@ -4,7 +4,7 @@ from spell import Spell
 import hero
 import pdb
 
-DEFAULT_FILE_DIR = 'dungeon_maps/level_1/'
+DEFAULT_FILE_DIR = 'src/dungeon_maps/level_1/'
 DEFAULT_MAP_FILE_NAME = 'map.txt'
 DEFAULT_TILE = '.'
 
