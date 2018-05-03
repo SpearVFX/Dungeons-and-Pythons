@@ -5,7 +5,7 @@ class Spell:
         # the spell needs at least that much amount of mana in order to be
         # cast.
         self.__manaCost = manaCost
-        # Raise an error if you cannot cast that spell.
+
         # if cast range is 1 you can attack enemies next you.
         self.__castRange = castRange
 

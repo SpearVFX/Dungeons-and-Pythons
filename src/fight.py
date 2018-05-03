@@ -1,12 +1,12 @@
 from hero import Hero
 from enemy import Enemy
-
-
+from fight_status_bar import FightStatusBar
 class Fight:
     def __init__(self, hero, enemy):
         self.hero = hero
         self.enemy = enemy
         self.range_ = self.calculate_range(hero.get_coords(), enemy.get_coords())
+        self.status_bar = FightStatusBar(self.hero, self.enemy)
 
     def calculate_range(self, heroCoords, enemyCoords):
         if heroCoords[0] == enemyCoords[0]:
@@ -25,24 +25,26 @@ class Fight:
         if fight_turn is True the Hero attacks
         if fight_turn is False the Enemy attacks
         """
-        both_alive = True  # self explainatory
 
-        while(both_alive):
+        while(self.both_alive()):
+
             if fight_turn:
                 self.hero_attack()
             else:
                 self.enemy_attack()
-
-            print("Hero has ", self.hero.get_health())
-            print("Enemy has ", self.enemy.get_health())
-            if not self.hero.is_alive():
-                print(f'{self.hero.known_as()} is dead. Game over.')
-                both_alive = False
-            elif not self.enemy.is_alive():
-                print(f'Enemy is dead.')
-                both_alive = False
-            fight_turn = not fight_turn #  switch turns
+            self.status_bar.header_string()
+            fight_turn = not fight_turn  # switch turns
         return
+
+    def both_alive(self):
+        if not self.hero.is_alive():
+            print(f'{self.hero.known_as()} is dead. Game over.')
+            return False
+        elif not self.enemy.is_alive():
+            print(f'Enemy is dead.')
+            return False
+        else:
+            return True
 
     def spell_is_in_range(self, e):
         if e.get_spell().get_castRange() >= self.range_:
@@ -50,6 +52,8 @@ class Fight:
         else:
             return False
 
+
+    '''attacks could be refactored pretty well'''
 
     def hero_attack(self):
         spell_ = self.hero.get_spell()
@@ -62,7 +66,7 @@ class Fight:
                 print(f'{self.hero.get_name()} dealt {spell_.get_damage()} with with {str(spell_)} to {self.enemy.get_name()}')
             else:
                 print("Cannot cast spell. Moving forward 1 UNIT.")
-                self.range_ -= 1
+                self.range_ -= 1  # needs to be fixed: range will become < 0 if overused
         elif command == 'w':
             if self.range_ != 0:
                 print("Cannot attack with weapon. Moving forward 1 UNIT.")

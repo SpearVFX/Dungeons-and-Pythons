@@ -2,7 +2,9 @@ from treasure import Treasure
 from weapon import Weapon
 from spell import Spell
 import hero
-import pdb
+import sys
+import os.path
+
 
 DEFAULT_FILE_DIR = 'src/dungeon_maps/level_1/'
 DEFAULT_MAP_FILE_NAME = 'map.txt'
@@ -12,23 +14,35 @@ DEFAULT_TILE = '.'
 class Dungeon:
     def __init__(self, *, fileDir=DEFAULT_FILE_DIR):
 
-        self.__fileName = ''
+        self.__fileDir = fileDir
         self.__dungeonLayout = []
 
         self.open_map(fileDir=fileDir)
-        self.__treasure = Treasure(filePath=fileDir)
+        self.__treasure = Treasure(fileDir=fileDir)
 
         self.__hero = None
 
         self.__current_tile = DEFAULT_TILE
 
-    """
+    """ 
         Sets the fileName attribute to the passed in one.
     """
 
     def open_map(self, *, fileDir=DEFAULT_FILE_DIR):
-        self.__fileName = fileDir + DEFAULT_MAP_FILE_NAME
-        self.__get_dungeon_layout()
+        fileName = fileDir + DEFAULT_MAP_FILE_NAME
+        self.__get_dungeon_layout(fullPath=fileName)
+        self.__fileDir = fileDir
+
+    """
+        Reads the file containing a dungeon map
+        and possibly several other things
+        and stores in into the dungeonLayout attribute.
+    """
+
+    def __get_dungeon_layout(self,*,fullPath):
+        self.__dungeonLayout = []
+        with open(fullPath, 'r') as file:
+            self.__extract_dugeon_data(file)
 
     """
         Extracts the dungeon map from the input file.
@@ -38,16 +52,6 @@ class Dungeon:
         for line in fileStream:
             self.__dungeonLayout.append(list(line.replace('\n', '')))
 
-    """
-        Reads the file containing a dungeon map
-        and possibly several other things
-        and stores in into the dungeonLayout attribute.
-    """
-
-    def __get_dungeon_layout(self):
-        self.__dungeonLayout = []
-        with open(self.__fileName, 'r') as file:
-            self.__extract_dugeon_data(file)
 
     """
         Print the map to the console window.
@@ -107,9 +111,9 @@ class Dungeon:
         nY = coords[1] + stepY
 
         return (
-                (nX>= 0 and nX < height) and
-                (nY>= 0 and nY< width) and
-                (self.__dungeonLayout[nX][nY] != '#')
+                (nY>= 0 and nY < height) and
+                (nX>= 0 and nX < width) and
+                (self.__dungeonLayout[nY][nX] != '#')
                )
 
     """
@@ -117,14 +121,14 @@ class Dungeon:
     """
 
     def __get_tile_at_coords(self, x, y):
-        return self.__dungeonLayout[x][y]
+        return self.__dungeonLayout[y][x]
 
     """
         Updates the tile at (x,y) with the given tile.
     """
 
     def __update_tile(self, x, y, tile):
-        self.__dungeonLayout[x][y] = tile
+        self.__dungeonLayout[y][x] = tile
 
     """
         This will move the character to the requessted direction
@@ -133,6 +137,7 @@ class Dungeon:
 
     def __move(self, x, y, tile):
         coords = self.__hero.get_coords()
+        
         self.__update_tile(coords[0],
                            coords[1],
                            self.__current_tile)
@@ -147,12 +152,13 @@ class Dungeon:
                            coords[1],
                            'H')
 
-    def __promt_arsenal_update(self, item):
+    def __prompt_arsenal_update(self, item):
         print(item)
         command = input(f'Would you like to change your current arsenal?:\
                         \n{self.__hero.get_weapon()}\
                         \n{self.__hero.get_spell()}\
                         \n Input Y or N:')
+                        
         if command is 'Y':
             return True
 
@@ -174,7 +180,7 @@ class Dungeon:
                 self.__hero.take_healing(item[1]['amount'])
 
         else:
-            command = (self.__promt_arsenal_update(item))
+            command = (self.__prompt_arsenal_update(item))
             if command:
                 if item[0] == 'weapon':
 
@@ -190,6 +196,30 @@ class Dungeon:
                     self.__hero.learn(spell)
 
     """
+        Generates the name of the dir containing the next level. 
+    """
+
+    def __generate_next_level_dir_name(self):
+        length = len(DEFAULT_FILE_DIR)-2
+        levelIndex = str(int(self.__fileDir[length:][:-1]) + 1)
+        nextLevelDirName = (self.__fileDir[0:length]) + levelIndex + '/'
+        return nextLevelDirName
+    
+    """
+        Loads the next level if there is one.
+    """
+
+    def __load_next_level(self):
+        nextLevelDirName = self.__generate_next_level_dir_name()        
+        
+        if os.path.exists(nextLevelDirName):
+            self.open_map(fileDir=nextLevelDirName)
+            self.__treasure.open_file(filePath=nextLevelDirName)
+            return True
+
+        return False
+    
+    """
         Moves the hero either up, down, left or right if possible.
     """
 
@@ -199,13 +229,13 @@ class Dungeon:
         stepY = 0
 
         if direction == 'up':
-            stepX = -1
-        elif direction == 'down':
-            stepX = 1
-        elif direction == 'left':
             stepY = -1
-        elif direction == 'right':
+        elif direction == 'down':
             stepY = 1
+        elif direction == 'left':
+            stepX = -1
+        elif direction == 'right':
+            stepX = 1
 
         coords = self.__hero.get_coords()
 
@@ -213,21 +243,30 @@ class Dungeon:
             tile = self.__get_tile_at_coords(
                 coords[0] + stepX,
                 coords[1] + stepY)
+            
             if tile == 'E':
                 # initiate fight
                 pass
+            
             elif tile == 'T':
                 self.__loot_treasure()
                 tile = DEFAULT_TILE
+            
             elif tile == 'G':
-                # finish level
-                pass
+                if self.__load_next_level():
+                    self.spawn(hero=self.__hero)
+                else:
+                    return self.credits()
 
             self.__move(stepX, stepY, tile)
-            pass
             return True
 
         return False
+
+    def credits(self):
+        return "Congratulations, You've finied the game!\
+                Directed and written by:\n\
+                Sasho Kostov and Dimitar Lukanov."
 
     def get_dungeon_layout(self):
         return self.__dungeonLayout
