@@ -26,6 +26,7 @@ class Entity:
         if by == "weapon":
             return self.__arsenal.get_weapon().get_damage()
         elif by == "spell":
+            self.__currMana -= self.__arsenal.get_spell().get_manaCost()
             return self.__arsenal.get_spell().get_damage()
         else:
             raise ValueError(f'Argument- by can only be: weapon, spell.\n')
@@ -46,7 +47,7 @@ class Entity:
             return mana
         else:
             return self.__maxMana - self.__currMana
-""" Pichki michki """
+
     '''Current stats modifier methods.'''
 
     def take_damage(self, damage=0):
@@ -61,7 +62,7 @@ class Entity:
     ''' Checks if the Entity is alive. '''
 
     def is_alive(self):
-        return True if self.__currHealth else False
+        return self.__currHealth > 0
 
     ''' Checks if the Entity has enough mana to cast. '''
 
