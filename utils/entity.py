@@ -80,6 +80,12 @@ class Entity:
     def get_mana(self):
         return self.__currMana
 
+    def get_max_health(self):
+        return self.__maxHealth
+
+    def get_max_mana(self):
+        return self.__maxMana
+
     def get_name(self):
         return self.__name
 
