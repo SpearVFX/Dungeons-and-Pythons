@@ -16,12 +16,17 @@ class Entity:
 
         self.__arsenal = Arsenal()
 
+    ''' Sets the current arsenal weapon to the passed in one. '''
+    
     def equip(self, weapon):
         self.__arsenal.equip_weapon(weapon=weapon)
+
+    ''' Sets the current arsenal spell to the passed in one. '''
 
     def learn(self, spell):
         self.__arsenal.learn_spell(spell=spell)
 
+    ''' Returns the damage dealth by the specific source. '''
     def attack(self, *, by=""):
         if by == "weapon":
             return self.__arsenal.get_weapon().get_damage()
@@ -48,14 +53,19 @@ class Entity:
         else:
             return self.__maxMana - self.__currMana
 
-    '''Current stats modifier methods.'''
+    ''' Current stats modifier methods. '''
 
     def take_damage(self, damage=0):
         self.__currHealth -= damage
 
+
+    ''' Sums the healing points returned by the __calculate_health_gain method and the currentHealth. '''
+
     def take_mana(self, mana=0):
         self.__currMana += self.__calculate_mana_gain(mana)
 
+    ''' Sums the healing points returned by the __calculate_health_gain method and the currentHealth. '''
+    
     def take_healing(self, healingPoints=0):
         self.__currHealth += self.__calculate_health_gain(healingPoints)
 
@@ -64,13 +74,16 @@ class Entity:
     def is_alive(self):
         return self.__currHealth > 0
 
-    ''' Checks if the Entity has enough mana to cast. '''
 
+    ''' Checks if the Entity has enough mana to cast. '''
+    
     def can_cast(self):
-        if (self.__currMana - self.__arsenal.get_spell().get_manaCost()) >= 0:
-            return True
-        else:
-            return False
+        return (self.__currMana - self.__arsenal.get_spell().get_manaCost()) >= 0
+    
+    ''' Sets the entities current coords to x and y. '''
+    
+    def set_coords(self,*, x, y):
+        self.coordinates = (x,y)
 
     ''' Getter methods '''
 
@@ -94,9 +107,6 @@ class Entity:
 
     def get_spell(self):
         return self.__arsenal.get_spell()
-
-    def set_coords(self,*, x, y):
-        self.coordinates = (x,y)
 
     def get_coords(self):
         return self.coordinates

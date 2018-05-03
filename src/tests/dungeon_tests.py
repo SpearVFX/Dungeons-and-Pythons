@@ -4,6 +4,7 @@ from src.hero import Hero
 import pdb
 
 plainMapDir = 'src/dungeon_maps/test_maps/plain_map/'
+treasureMapDir='src/dungeon_maps/test_maps/treasure_map/'
 validMapDir = 'src/dungeon_maps/level_1/'
 
 
@@ -50,6 +51,7 @@ class DungeonTests(unittest.TestCase):
                 self.dummy.get_dungeon_layout()[1][2],
                 'H'
             )
+
         with self.subTest('Test moving left.'):
             self.dummy.open_map(fileDir=plainMapDir)
             self.dummy.spawn(hero=self.hero)
@@ -61,9 +63,19 @@ class DungeonTests(unittest.TestCase):
             )
 
         with self.subTest('Test moving into treasure chest.'):
-            self.dummy.open_map(fileDir=plainMapDir)
+            self.dummy.open_map(fileDir=treasureMapDir)
             self.dummy.spawn(hero=self.hero)
 
-
+        with self.subTest('Test moving into gateway.'):
+            self.dummy.open_map(fileDir=validMapDir)
+            self.dummy.spawn(hero=self.hero)
+            self.assertEqual(type(self.dummy.move_hero(direction='right')),str)
+        
+        with self.subTest('Test moving into gateway work when dirs have larger indexes.'):
+            temp = 'src/dungeon_maps/level_99/'
+            self.dummy.open_map(fileDir=temp)
+            self.dummy.spawn(hero=self.hero)
+            self.assertEqual(type(self.dummy.move_hero(direction='right')),str)
+        
 if __name__ == '__main__':
     unittest.main()
