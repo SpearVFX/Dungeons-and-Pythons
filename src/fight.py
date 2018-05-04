@@ -1,6 +1,6 @@
-from hero import Hero
-from enemy import Enemy
-from fight_status_bar import FightStatusBar
+from src.hero import Hero
+from src.enemy import Enemy
+from src.fight_status_bar import FightStatusBar
 
 
 class Fight:

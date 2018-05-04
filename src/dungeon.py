@@ -1,12 +1,12 @@
-from treasure import Treasure
-from weapon import Weapon
-from spell import Spell
-import hero
+from src.treasure import Treasure
+from src.weapon import Weapon
+from src.spell import Spell
+import src.hero
 import sys
 import os.path
 
 
-DEFAULT_FILE_DIR = 'src/dungeon_maps/level_1/'
+DEFAULT_FILE_DIR = 'dungeon_maps/level_1/'
 DEFAULT_MAP_FILE_NAME = 'map.txt'
 DEFAULT_TILE = '.'
 
