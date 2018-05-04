@@ -1,23 +1,23 @@
 '''this is going to be a manual test'''
 
-from hero import Hero
-from enemy import Enemy
-from spell import Spell
-from weapon import Weapon
-from fight import Fight
-from fight_status_bar import FightStatusBar
+from src.hero import Hero
+from src.enemy import Enemy
+from src.spell import Spell
+from src.weapon import Weapon
+from src.fight import Fight
+from src.fight_status_bar import FightStatusBar
 
 h = Hero(name="Genadi", title="Gopnik")
 
-s = Spell(name="Kwass Molotov", damage=5, manaCost=50, castRange=5)
-s1 = Spell(name="Magic spit", damage=10, manaCost=25, castRange=50)
+s = Spell(name="Kwass Molotov", damage=5, manaCost=10, castRange=7)
+s1 = Spell(name="Magic spit", damage=10, manaCost=25, castRange=2)
 
 w = Weapon(name="Beer Bottle", damage=25)
-w1 = Weapon(name="Bat", damage=50)
+w1 = Weapon(name="Bat", damage=22)
 
 h.equip(w)
 h.learn(s)
-h.coordinates = (0, 5)
+h.coordinates = (0, 7)
 
 e = Enemy()
 
@@ -28,4 +28,4 @@ e.coordinates = (0, 0)
 
 f = Fight(h, e)
 fsb = FightStatusBar(h, e)
-#f.initialize_fight()
+f.initialize_fight()

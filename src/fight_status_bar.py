@@ -11,8 +11,12 @@ class FightStatusBar:
         self.enemy = enemy
         self.status_string = ""
 
-    def header_string(self):
+    def header_string_with_clear_terminal(self):
         cls()
+        self.header_string()
+        pass
+
+    def header_string(self):
         print('+{0:-^50}+{0:-^50}+'.format(''))
         print('|{:^50}|{:^50}|'.format(self.hero.known_as(), "Enemy"))
         print('+{0:-^50}+{0:-^50}+'.format(''))
