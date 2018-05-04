@@ -3,9 +3,9 @@ from src.dungeon import Dungeon
 from src.hero import Hero
 import pdb
 
-plainMapDir = 'src/dungeon_maps/test_maps/plain_map/'
-treasureMapDir='src/dungeon_maps/test_maps/treasure_map/'
-validMapDir = 'src/dungeon_maps/level_1/'
+plainMapDir = 'dungeon_maps/test_maps/plain_map/'
+treasureMapDir='dungeon_maps/test_maps/treasure_map/'
+validMapDir = 'dungeon_maps/level_1/'
 
 
 class DungeonTests(unittest.TestCase):
@@ -72,7 +72,7 @@ class DungeonTests(unittest.TestCase):
             self.assertEqual(type(self.dummy.move_hero(direction='right')),str)
         
         with self.subTest('Test moving into gateway work when dirs have larger indexes.'):
-            temp = 'src/dungeon_maps/level_99/'
+            temp = 'dungeon_maps/level_99/'
             self.dummy.open_map(fileDir=temp)
             self.dummy.spawn(hero=self.hero)
             self.assertEqual(type(self.dummy.move_hero(direction='right')),str)

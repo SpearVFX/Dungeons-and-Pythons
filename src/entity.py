@@ -1,6 +1,6 @@
-from weapon import Weapon
-from spell import Spell
-from arsenal import Arsenal
+from src.weapon import Weapon
+from src.spell import Spell
+from src.arsenal import Arsenal
 
 
 class Entity:

@@ -1,4 +1,4 @@
-from entity import Entity
+from src.entity import Entity
 
 
 class Hero(Entity):
