@@ -1,6 +1,6 @@
 import os
 
-
+'''Clears the terminal'''
 def cls():
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -16,6 +16,8 @@ class FightStatusBar:
         self.header_string()
         pass
 
+    '''This function prints the head of the status bar.'''
+    '''It contains the name of the hero and an enemy.'''
     def header_string(self):
         print('+{0:-^50}+{0:-^50}+'.format(''))
         print('|{:^50}|{:^50}|'.format(self.hero.known_as(), "Enemy"))
@@ -23,6 +25,7 @@ class FightStatusBar:
         self.health_mana_status_bar()
         pass
 
+    '''Creates the bar themselves as a string'''
     def bar_string(self, stats):
         bar_string = ['', '']
         size = int(stats[0] * 50)
@@ -44,17 +47,24 @@ class FightStatusBar:
 
         return([(curHp, maxHp), (curMa, maxMa)])
 
+    '''The ratio is needed for calculating the size of the bar string'''
     def calculate_ratio(self, e):
         stats = self.get_max_cur_mana_hp(e)
 
         return (stats[0][0]/stats[0][1], stats[1][0]/stats[1][1])  # cur / max
 
     def health_mana_status_bar(self):
+        '''The bars themselves'''
         hero_bar = self.bar_string(self.calculate_ratio(self.hero))
         enemy_bar = self.bar_string(self.calculate_ratio(self.enemy))
+
+        '''These are the stats under the bars. Example: 100/100'''
+
+        '''Stats for the Hero'''
         hero_stats = self.get_max_cur_mana_hp(self.hero)
         h_health_string = f'{hero_stats[0][0]}/{hero_stats[0][1]}'
         h_mana_string = f'{hero_stats[1][0]}/{hero_stats[1][1]}'
+        '''Stats for the Enemy'''
         enemy_stats = self.get_max_cur_mana_hp(self.enemy)
         e_health_string = f'{enemy_stats[0][0]}/{enemy_stats[0][1]}'
         e_mana_string = f'{enemy_stats[1][0]}/{enemy_stats[1][1]}'
