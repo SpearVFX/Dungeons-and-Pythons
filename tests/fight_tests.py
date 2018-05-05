@@ -27,5 +27,4 @@ e.coordinates = (0, 0)
 
 
 f = Fight(h, e)
-fsb = FightStatusBar(h, e)
 f.initialize_fight()

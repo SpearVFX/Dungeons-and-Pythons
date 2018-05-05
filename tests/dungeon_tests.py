@@ -69,7 +69,7 @@ class DungeonTests(unittest.TestCase):
         with self.subTest('Test moving into gateway.'):
             self.dummy.open_map(fileDir=validMapDir)
             self.dummy.spawn(hero=self.hero)
-            self.assertEqual(type(self.dummy.move_hero(direction='right')),str)
+            self.assertEqual(self.dummy.move_hero(direction='right'), True)
         
         with self.subTest('Test moving into gateway work when dirs have larger indexes.'):
             temp = 'dungeon_maps/level_99/'
