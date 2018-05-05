@@ -7,10 +7,13 @@ class Fight:
     def __init__(self, hero, enemy):
         self.hero = hero
         self.enemy = enemy
+        self.winner = None
+        
         self.range_ = self.calculate_range(hero.get_coords(),
                                            enemy.get_coords())
         self.battle_log = ''  # needed when displaying info
         self.status_bar = FightStatusBar(self.hero, self.enemy)
+        
 
     def calculate_range(self, heroCoords, enemyCoords):
         if heroCoords[0] == enemyCoords[0]:
@@ -19,6 +22,20 @@ class Fight:
             return abs(heroCoords[0] - enemyCoords[0])
         else:
             return -1
+    
+    """
+        Sets the winner attribute, depending on who's still alive. 
+    """
+
+    def __set_winner(self):
+        self.winner = self.hero if self.hero_won_the_fight else self.enemy
+
+    """
+        Returns true if the hero is alive.
+    """
+
+    def hero_won_the_fight(self):
+        return self.hero.is_alive()
 
     def initialize_fight(self):
         if self.range_ == -1:
@@ -37,12 +54,14 @@ class Fight:
                 self.hero_attack()
             else:
                 self.enemy_attack()
-            self.battle_log += ("Current range is: {} \n".format(self.range_))
+            self.battle_log += (f'Current range is: {self.range_} \n')
             self.status_bar.header_string_with_clear_terminal()
             print(self.battle_log)
             if not fight_turn:
                 self.battle_log = ''
             fight_turn = not fight_turn  # switch turns
+        
+        self.__set_winner()
         return
 
     def both_alive(self):
@@ -119,3 +138,6 @@ class Fight:
         else:
             self.battle_log += ("Enemy cannot attack. Moving 1 UNIT. \n")
             self.range_ -= 1
+    
+    def get_winner(self):
+        return self.winner
