@@ -5,13 +5,16 @@ from src.hero import Hero
 from src.enemy import Enemy
 from src.fight import Fight
 from src.fight_status_bar import FightStatusBar
-import src.hero
+
 import sys
 import os.path
+import csv
+import pdb
 
 
 DEFAULT_FILE_DIR = 'dungeon_maps/level_1/'
 DEFAULT_MAP_FILE_NAME = 'map.txt'
+DEFAULT_ENEMY_FILE_NAME = 'enemies.csv'
 
 DEFAULT_TILE = '.'
 ENEMY_TILE = 'E'
@@ -25,24 +28,31 @@ WALL_TILE = '#'
 class Dungeon:
     def __init__(self, *, fileDir=DEFAULT_FILE_DIR):
 
+        
         self.__fileDir = fileDir
         self.__dungeonLayout = []
 
         self.open_map(fileDir=fileDir)
         self.__treasure = Treasure(fileDir=fileDir)
 
+        self.__enemies = []
+        self.__extract_enemies()
+
         self.__hero = None
-
-        self.__current_tile = DEFAULT_TILE
-
+        self.__currEnemy=None
+    
     """ 
         Sets the fileName attribute to the passed in one.
     """
 
     def open_map(self, *, fileDir=DEFAULT_FILE_DIR):
         fileName = fileDir + DEFAULT_MAP_FILE_NAME
+        
         self.__get_dungeon_layout(fullPath=fileName)
+        
         self.__fileDir = fileDir
+        self.__extract_enemies()
+
 
     """
         Reads the file containing a dungeon map
@@ -63,14 +73,37 @@ class Dungeon:
         for line in fileStream:
             self.__dungeonLayout.append(list(line.replace('\n', '')))
 
+    """
+        Extracts the enemeis from the enemies.csv file. 
+    """
 
+    def __extract_enemies(self):
+        self.__enemies =[]
+        fullPath = self.__fileDir + DEFAULT_ENEMY_FILE_NAME
+        
+        if os.path.exists(fullPath): 
+            with open(fullPath, 'r') as f:
+                for line in csv.reader(f):
+                    self.__enemies.append(Enemy(name=line[0],
+                                                health=int(line[1]),
+                                                mana=int(line[2]),
+                                                damage=int(line[3])))
+        
     """
         Print the map to the console window.
     """
 
     def print_map(self):
-        for row in self.__dungeonLayout:
-            print(''.join(row))
+        for row in range(len(self.__dungeonLayout)):
+            for col in range(len(self.__dungeonLayout[row])):
+                if (col, row) == self.__hero.get_coords():
+                    print(HERO_TILE, end='')
+                elif (col,row) == self.__currEnemy.get_coords():
+                    print(ENEMY_TILE,end='')
+
+                else:
+                    print(self.__dungeonLayout[row][col],end='')
+            print()
 
     """
         Returns the coordinates of the first spawn
@@ -86,17 +119,7 @@ class Dungeon:
         return None
 
     """
-        Overwrites the first spawn location found
-        by the __find_spawn_location method.
-    """
-
-    def __overwrite_spawn_location(self, *,coordinates):
-        self.__hero.set_coords(x = coordinates[0], y = coordinates[1])
-        heroCoords = self.__hero.get_coords()
-        self.__dungeonLayout[heroCoords[0]][heroCoords[1]] = HERO_TILE
-
-    """
-        Overwrites the first spawn location found with the H symbol.
+        Overwrites the first spawn location found with the DEFAULT_TILE symbol.
     """
 
     def spawn(self, *, hero):
@@ -104,7 +127,8 @@ class Dungeon:
         locationCoords = self.__find_spawn_location()
         if locationCoords is not None:
             self.__hero = hero
-            self.__overwrite_spawn_location(coordinates = locationCoords)
+            self.__hero.set_coords(x = locationCoords[0], y = locationCoords[1])
+            self.__update_tile(x=locationCoords[0],y=locationCoords[1],tile=DEFAULT_TILE)
             return True
 
         return False
@@ -113,7 +137,7 @@ class Dungeon:
         Checks if the passed in coordinates x and y are valid. 
     """
 
-    def __are_valid_coords(self, x, y):
+    def __are_valid_coords(self,*, x, y):
         height = len(self.__dungeonLayout)
         width = len(self.__dungeonLayout[0])
 
@@ -124,14 +148,14 @@ class Dungeon:
         Checks if the hero will leave the map or hit an obstacle.
     """
 
-    def __is_valid_move(self, stepX, stepY):
-        coords = self.__hero.get_coords()
+    def __is_valid_move(self,*,target, stepX, stepY):
+        coords = target.get_coords()
         
         nX = coords[0] + stepX
         nY = coords[1] + stepY
-
+        
         return (
-                self.__are_valid_coords(nX,nY) and
+                self.__are_valid_coords(x=nX,y=nY) and
                 (self.__dungeonLayout[nY][nX] != WALL_TILE)
                )
 
@@ -154,22 +178,11 @@ class Dungeon:
         saving the tile that will be overriden.
     """
 
-    def __move(self, x, y, tile):
-        coords = self.__hero.get_coords()
-        
-        self.__update_tile(x=coords[0],
-                           y=coords[1],
-                           tile= self.__current_tile)
+    def __move(self, *,target, x, y):
+        if(self.__hero.is_alive()):
+            coords = target.get_coords()   
+            target.set_coords(x = coords[0] + x, y = coords[0] + y)
 
-        self.__current_tile = tile
-
-        self.__hero.set_coords(x = coords[0] + x, y = coords[0] + y)
-
-        coords = self.__hero.get_coords()
-
-        self.__update_tile(x=coords[0],
-                           y=coords[1],
-                           tile=HERO_TILE)
 
     """
         Asks the player if he wants to update his arsenal with the passed in item. 
@@ -254,7 +267,7 @@ class Dungeon:
         hero_coords = self.__hero.get_coords()
 
         for i in range(1,castRange+1):
-            if  self.__are_valid_coords(hero_coords[0] + i, hero_coords[0]):
+            if  self.__are_valid_coords(x=hero_coords[0] + i,y=hero_coords[0]):
 
                 if self.__get_tile_at_coords(hero_coords[0] + i, hero_coords[0]) == '#':
                     break  
@@ -265,7 +278,7 @@ class Dungeon:
                 break
 
         for i in range(1, castRange+1):
-            if self.__are_valid_coords(hero_coords[0], hero_coords[0] + i):
+            if self.__are_valid_coords(x=hero_coords[0], y=hero_coords[0] + i):
                 
                 if self.__get_tile_at_coords(hero_coords[0], hero_coords[0] + i) == '#':
                     break
@@ -283,13 +296,11 @@ class Dungeon:
     
     def __check_for_enemies_in_range(self):
         
-        if self.__hero.get_spell() != None:
-        
-            spellRange = self.__hero.get_spell().get_castRange()
-            enemyCoords= self.__get_enemy_coords_in_range(castRange=spellRange)
-        
-            if enemyCoords != None:
-                return enemyCoords
+        spellRange = self.__hero.get_spell().get_castRange()
+        enemyCoords= self.__get_enemy_coords_in_range(castRange=spellRange)
+    
+        if enemyCoords != None:
+            return enemyCoords
 
         return None
     
@@ -298,37 +309,40 @@ class Dungeon:
         Starts a fight with an enemy at given coords. 
     """
 
-    def start_fight(self, enemyCoords):
-        enemy = Enemy()
-        enemy.set_coords(x=enemyCoords[0], y=enemyCoords[1])
-
-        fight = Fight(hero=self.__hero, enemy=enemy)
+    def start_fight(self,*, enemyX, enemyY):
+        self.__currEnemy = self.__enemies.pop()
+        self.__currEnemy.set_coords(x=enemyX, y=enemyY)
+        fight = Fight(hero=self.__hero, enemy=self.__currEnemy, dungeon=self)
+                
         fight.initialize_fight()
-        
-        self.update_map_by_results(fight= fight,enemyCoords= enemyCoords)
+
+        self.update_map_by_results(fight= fight,
+                                   initialEnemyCoords=(enemyX,enemyY),
+                                   currEnemyCoords=self.__currEnemy.get_coords())
     
 
     """
         Updates the map depending on who won the fight. 
     """
 
-    def update_map_by_results(self, fight, enemyCoords):
+    def update_map_by_results(self, fight, initialEnemyCoords, currEnemyCoords):
         winner = fight.get_winner()
-        if type(winner) is Hero:
-            self.__hero.set_coords(enemyCoords[0], enemyCoords[1])
-
-        elif type(winner) is Enemy:
-            self.__update_tile(x=enemyCoords[0],
-                               y=enemyCoords[1],
+        
+        self.__update_tile(x=currEnemyCoords[0],
+                           y=currEnemyCoords[1],
+                           tile=DEFAULT_TILE)
+        pdb.set_trace()
+        if type(winner) is Enemy:
+            self.__update_tile(x=initialEnemyCoords[0],
+                               y=initialEnemyCoords[1],
                                tile=ENEMY_TILE)
 
-            heroCoords = self.__hero.get_coords()
+            winner.heal_to_full()
+            self.__enemies.append(winner)
 
-            self.__update_tile(x=heroCoords[0],
-                               y=heroCoords[1],
-                               tile=DEFAULT_TILE)    
-
-            self.__hero.__set_coords(x=None, y=None)
+            self.__hero.set_coords(x=None, y=None)
+                
+            
 
     """
         Initiate a fight with an enemy if there's one in range.
@@ -339,10 +353,18 @@ class Dungeon:
             coords = self.__check_for_enemies_in_range()
 
             if coords != None:
-                self.start_fight(coords)
-        else:
-            print('Not enough mana!')
-            return False
+                self.__update_tile(x=coords[0],
+                                   y=coords[1],
+                                   tile=DEFAULT_TILE)
+                                   
+                self.start_fight(enemyX=coords[0],
+                                 enemyY=coords[1])
+                return True
+
+            else:
+                print("No enemies within spell range.")
+
+        return False
 
     """
         Moves the hero either up, down, left or right if possible.
@@ -364,35 +386,63 @@ class Dungeon:
 
         coords = self.__hero.get_coords()
 
-        if(self.__is_valid_move(stepX, stepY)):
-            tile = self.__get_tile_at_coords(
-                coords[0] + stepX,
-                coords[1] + stepY)
+        if(self.__is_valid_move(target=self.__hero,
+                                stepX=stepX,
+                                stepY=stepY)):
             
+            tile = self.__get_tile_at_coords(coords[0] + stepX,
+                                             coords[1] + stepY)
+            
+
             if tile == ENEMY_TILE:
-                # initiate fight
-                pass
+                self.start_fight(enemyX=coords[0]+stepX,
+                                 enemyY=coords[1]+stepY)
             
             elif tile == TREASURE_TILE:
                 self.__loot_treasure()
-                tile = DEFAULT_TILE
-            
+                self.__update_tile(x=coords[0]+stepX,
+                                   y=coords[1]+stepY,
+                                   tile=DEFAULT_TILE)
+
             elif tile == GATEWAY_TILE:
                 if self.__load_next_level():
                     self.spawn(hero=self.__hero)
                 else:
                     return self.credits()
 
-            self.__move(stepX, stepY, tile)
+            self.__move(target=self.__hero,
+                        x=stepX,
+                        y=stepY)
             return True
 
         return False
+    
 
-    def credits(self):
-        return "Congratulations, You've finied the game!\
-                Directed and written by:\n\
-                Sasho Kostov and Dimitar Lukanov."
+    """
+        Sets one of the coordinates of the chaser a tile closer to the chased target.
+    """
 
+    def chase(self,*,chaser, chased):
+        chaserCoords = chaser.get_coords()
+        chasedCoords = chased.get_coords()
+
+        distance = 0
+
+        if chaserCoords[0] != chasedCoords[0]:
+            distance = (chasedCoords[0]-chaserCoords[0])
+            stepX = distance//abs(distance)
+            if self.__is_valid_move(target=chaser, stepX=stepX, stepY=chaserCoords[1]):
+                chaser.set_coords(x=chaserCoords[0] + stepX,y=chaserCoords[1])
+                return
+                
+
+        if chaserCoords[1] != chasedCoords[1]:
+            distance = (chasedCoords[1]-chaserCoords[1])
+            stepY = distance//abs(distance)
+            if self.__is_valid_move(target=chaser, stepX=chaserCoords[0], stepY=stepY):
+                chaser.set_coords(x=chaserCoords[0],y=chaserCoords[1] + stepY)
+                
+        
     def get_dungeon_layout(self):
         return self.__dungeonLayout
 
@@ -401,3 +451,8 @@ class Dungeon:
 
     def get_hero(self):
         return self.__hero
+
+    def credits(self):
+        return "Congratulations, You've finied the game!\
+                Directed and written by:\n\
+                Sasho Kostov and Dimitar Lukanov."

@@ -29,12 +29,20 @@ class Entity:
     ''' Returns the damage dealth by the specific source. '''
     def attack(self, *, by=""):
         if by == "weapon":
-            return self.__arsenal.get_weapon().get_damage()
+            if self.__arsenal.get_weapon() != None:
+                return self.__arsenal.get_weapon().get_damage()
+            else:
+                print('You dont have a weapon equiped!? What are you, stupid?')
+
         elif by == "spell":
-            self.__currMana -= self.__arsenal.get_spell().get_manaCost()
-            return self.__arsenal.get_spell().get_damage()
-        else:
-            raise ValueError(f'Argument- by can only be: weapon, spell.\n')
+            
+            if self.__arsenal.get_spell() != None:
+                self.__currMana -= self.__arsenal.get_spell().get_manaCost()
+                return self.__arsenal.get_spell().get_damage()
+            else:
+                print('You havent learned ANY spells, idiot.')
+
+        return 0
 
     '''Returns the amount of health gained after an event has occured.'''
 
@@ -78,7 +86,21 @@ class Entity:
     ''' Checks if the Entity has enough mana to cast. '''
     
     def can_cast(self):
-        return (self.__currMana - self.__arsenal.get_spell().get_manaCost()) >= 0
+        if self.__arsenal.get_spell() == None:
+            print("You need to learn a spell to cast! Idiot...")
+        elif (self.__currMana - self.__arsenal.get_spell().get_manaCost()) < 0:
+            print("Not enough mana!")
+        else:
+            return True
+
+        return False
+
+    """
+        Restores the entities mana and health to full. 
+    """
+    def heal_to_full(self):
+        self.__currHealth = self.__maxHealth
+        self.__currMana = self.__currMana
     
     ''' Sets the entities current coords to x and y. '''
     
@@ -110,3 +132,9 @@ class Entity:
 
     def get_coords(self):
         return self.coordinates
+
+    def __str__(self):
+        return f'name={self.__name}, health={self.__maxHealth}, mana={self.__maxMana}'
+
+    def __repr__(self):
+        self.__str__()
