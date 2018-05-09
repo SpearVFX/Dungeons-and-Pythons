@@ -4,18 +4,18 @@ from src.fight_status_bar import FightStatusBar
 
 import pdb
 
+
 class Fight:
-    def __init__(self,*, hero, enemy,dungeon):
+    def __init__(self, *, hero, enemy, dungeon):
         self.hero = hero
         self.enemy = enemy
         self.dungeon = dungeon
         self.winner = None
-        
+
         self.range_ = self.calculate_range(hero.get_coords(),
                                            enemy.get_coords())
         self.battle_log = ''  # needed when displaying info
-        self.status_bar = FightStatusBar(self.hero, self.enemy,self.dungeon)
-        
+        self.status_bar = FightStatusBar(self.hero, self.enemy, self.dungeon)
 
     def calculate_range(self, heroCoords, enemyCoords):
         if heroCoords[0] == enemyCoords[0]:
@@ -24,9 +24,9 @@ class Fight:
             return abs(heroCoords[0] - enemyCoords[0])
         else:
             return -1
-    
+
     """
-        Sets the winner attribute, depending on who's still alive. 
+        Sets the winner attribute, depending on who's still alive.
     """
 
     def __set_winner(self):
@@ -49,7 +49,7 @@ class Fight:
         if fight_turn is True the Hero attacks
         if fight_turn is False the Enemy attacks
         """
-    
+
         while(self.both_alive()):
             if fight_turn:
                 print("Your turn: ")
@@ -64,12 +64,10 @@ class Fight:
             if not fight_turn:
                 self.battle_log = ''
             fight_turn = not fight_turn  # switch turns
-        
 
-        #pdb.set_trace()
+        # pdb.set_trace()
         self.__set_winner()
         return True
-        
 
     def both_alive(self):
         if not self.hero.is_alive():
@@ -113,7 +111,7 @@ class Fight:
                     self.battle_log += ("Moving forward 1 Unit. \n")
                     self.dungeon.chase(chaser=self.hero, chased=self.enemy)
                     self.range_ -= 1
-        
+
         elif command == 'w':
             if self.range_ != 0:
                 self.battle_log += ("Cannot attack with weapon. \
@@ -128,7 +126,6 @@ class Fight:
                                     str(weapon_),
                                     self.enemy.get_name()))
 
-
     def enemy_attack(self):
         spell_ = self.enemy.get_spell()
         weapon_ = self.enemy.get_weapon()
@@ -136,22 +133,21 @@ class Fight:
         if self.enemy.can_cast() and self.spell_is_in_range(self.enemy):
             self.hero.take_damage(self.enemy.attack(by="spell"))
             self.battle_log += (self.damage_report(
-                  self.enemy.get_name(),
-                  spell_.get_damage(),
-                  str(spell_),
-                  self.hero.get_name()))
+                self.enemy.get_name(),
+                spell_.get_damage(),
+                str(spell_),
+                self.hero.get_name()))
         elif self.range_ == 0:
             self.hero.take_damage(self.enemy.get_base_damage())
             self.battle_log += (self.damage_report(
-                  self.enemy.get_name(),
-                  self.enemy.get_base_damage(),
-                  str(weapon_),
-                  self.hero.get_name()))
-        elif self.range_ >0:
+                self.enemy.get_name(),
+                self.enemy.get_base_damage(),
+                str(weapon_),
+                self.hero.get_name()))
+        elif self.range_ > 0:
             self.battle_log += ("Enemy cannot attack. Moving 1 UNIT. \n")
             self.dungeon.chase(chaser=self.enemy, chased=self.hero)
             self.range_ -= 1
-
 
     def get_winner(self):
         return self.winner

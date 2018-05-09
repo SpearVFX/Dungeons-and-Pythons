@@ -6,7 +6,7 @@ from src.arsenal import Arsenal
 class Entity:
     def __init__(self, *, name=None, health=0, mana=0):
         self.__name = name
-        self.coordinates = (0,0)
+        self.coordinates = (0, 0)
 
         self.__maxHealth = health
         self.__maxMana = mana
@@ -17,7 +17,7 @@ class Entity:
         self.__arsenal = Arsenal()
 
     ''' Sets the current arsenal weapon to the passed in one. '''
-    
+
     def equip(self, weapon):
         self.__arsenal.equip_weapon(weapon=weapon)
 
@@ -27,16 +27,17 @@ class Entity:
         self.__arsenal.learn_spell(spell=spell)
 
     ''' Returns the damage dealth by the specific source. '''
+
     def attack(self, *, by=""):
         if by == "weapon":
-            if self.__arsenal.get_weapon() != None:
+            if self.__arsenal.get_weapon() is not None:
                 return self.__arsenal.get_weapon().get_damage()
             else:
                 print('You dont have a weapon equiped!? What are you, stupid?')
 
         elif by == "spell":
-            
-            if self.__arsenal.get_spell() != None:
+
+            if self.__arsenal.get_spell() is not None:
                 self.__currMana -= self.__arsenal.get_spell().get_manaCost()
                 return self.__arsenal.get_spell().get_damage()
             else:
@@ -66,14 +67,13 @@ class Entity:
     def take_damage(self, damage=0):
         self.__currHealth -= damage
 
-
     ''' Sums the healing points returned by the __calculate_health_gain method and the currentHealth. '''
 
     def take_mana(self, mana=0):
         self.__currMana += self.__calculate_mana_gain(mana)
 
     ''' Sums the healing points returned by the __calculate_health_gain method and the currentHealth. '''
-    
+
     def take_healing(self, healingPoints=0):
         self.__currHealth += self.__calculate_health_gain(healingPoints)
 
@@ -82,11 +82,10 @@ class Entity:
     def is_alive(self):
         return self.__currHealth > 0
 
-
     ''' Checks if the Entity has enough mana to cast. '''
-    
+
     def can_cast(self):
-        if self.__arsenal.get_spell() == None:
+        if self.__arsenal.get_spell() is None:
             print("You need to learn a spell to cast! Idiot...")
         elif (self.__currMana - self.__arsenal.get_spell().get_manaCost()) < 0:
             print("Not enough mana!")
@@ -96,16 +95,17 @@ class Entity:
         return False
 
     """
-        Restores the entities mana and health to full. 
+        Restores the entities mana and health to full.
     """
+
     def heal_to_full(self):
         self.__currHealth = self.__maxHealth
         self.__currMana = self.__currMana
-    
+
     ''' Sets the entities current coords to x and y. '''
-    
-    def set_coords(self,*, x, y):
-        self.coordinates = (x,y)
+
+    def set_coords(self, *, x, y):
+        self.coordinates = (x, y)
 
     ''' Getter methods '''
 
