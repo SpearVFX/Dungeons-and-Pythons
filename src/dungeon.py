@@ -24,7 +24,7 @@ class Dungeon:
 
         self.__current_tile = DEFAULT_TILE
 
-    """ 
+    """
         Sets the fileName attribute to the passed in one.
     """
 
@@ -57,9 +57,31 @@ class Dungeon:
         Print the map to the console window.
     """
 
+    def __print_colorized(self, row):
+        for symbol in row:
+            if symbol == 'S' or symbol == 'H':
+                print(f'\x1b[28m{symbol}\x1b[0m', end='', flush=True)
+            elif symbol == 'G':
+                print(f'\x1b[36m{symbol}\x1b[0m', end='', flush=True)
+            elif symbol == '#':
+                print(f'\x1b[37m{symbol}\x1b[0m', end='', flush=True)
+            elif symbol == '.':
+                print(f'\x1b[30m{symbol}\x1b[0m', end='', flush=True)
+            elif symbol == 'T':
+                print(f'\x1b[33m{symbol}\x1b[0m', end='', flush=True)
+            elif symbol == 'E':
+                print(f'\x1b[31m{symbol}\x1b[0m', end='', flush=True)
+            else:
+                print(symbol, end='', flush=True)
+        print('')
+        pass
+
     def print_map(self):
         for row in self.__dungeonLayout:
-            print(''.join(row))
+            #print(''.join(row))
+            self.__print_colorized(''.join(row))
+        pass
+
 
     """
         Returns the coordinates of the first spawn
@@ -137,7 +159,7 @@ class Dungeon:
 
     def __move(self, x, y, tile):
         coords = self.__hero.get_coords()
-        
+
         self.__update_tile(coords[0],
                            coords[1],
                            self.__current_tile)
@@ -158,7 +180,7 @@ class Dungeon:
                         \n{self.__hero.get_weapon()}\
                         \n{self.__hero.get_spell()}\
                         \n Input Y or N:')
-                        
+
         if command is 'Y':
             return True
 
@@ -196,7 +218,7 @@ class Dungeon:
                     self.__hero.learn(spell)
 
     """
-        Generates the name of the dir containing the next level. 
+        Generates the name of the dir containing the next level.
     """
 
     def __generate_next_level_dir_name(self):
@@ -204,21 +226,21 @@ class Dungeon:
         levelIndex = str(int(self.__fileDir[length:][:-1]) + 1)
         nextLevelDirName = (self.__fileDir[0:length]) + levelIndex + '/'
         return nextLevelDirName
-    
+
     """
         Loads the next level if there is one.
     """
 
     def __load_next_level(self):
-        nextLevelDirName = self.__generate_next_level_dir_name()        
-        
+        nextLevelDirName = self.__generate_next_level_dir_name()
+
         if os.path.exists(nextLevelDirName):
             self.open_map(fileDir=nextLevelDirName)
             self.__treasure.open_file(filePath=nextLevelDirName)
             return True
 
         return False
-    
+
     """
         Moves the hero either up, down, left or right if possible.
     """
@@ -243,15 +265,15 @@ class Dungeon:
             tile = self.__get_tile_at_coords(
                 coords[0] + stepX,
                 coords[1] + stepY)
-            
+
             if tile == 'E':
                 # initiate fight
                 pass
-            
+
             elif tile == 'T':
                 self.__loot_treasure()
                 tile = DEFAULT_TILE
-            
+
             elif tile == 'G':
                 if self.__load_next_level():
                     self.spawn(hero=self.__hero)
