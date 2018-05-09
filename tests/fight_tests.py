@@ -25,7 +25,6 @@ e.learn(s1)
 e.equip(w1)
 e.coordinates = (0, 0)
 
-
-f = Fight(h, e)
-fsb = FightStatusBar(h, e)
-f.initialize_fight()
+""" 
+f = Fight(h, e,)
+f.initialize_fight() """

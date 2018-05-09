@@ -6,14 +6,16 @@ def cls():
 
 
 class FightStatusBar:
-    def __init__(self, hero, enemy):
+    def __init__(self, hero, enemy,dungeon):
         self.hero = hero
         self.enemy = enemy
+        self.dungeon = dungeon
         self.status_string = ""
 
     def header_string_with_clear_terminal(self):
         cls()
         self.header_string()
+        self.dungeon.print_map()            
         pass
 
     '''This function prints the head of the status bar.'''
@@ -50,7 +52,7 @@ class FightStatusBar:
     '''The ratio is needed for calculating the size of the bar string'''
     def calculate_ratio(self, e):
         stats = self.get_max_cur_mana_hp(e)
-
+        
         return (stats[0][0]/stats[0][1], stats[1][0]/stats[1][1])  # cur / max
 
     def health_mana_status_bar(self):

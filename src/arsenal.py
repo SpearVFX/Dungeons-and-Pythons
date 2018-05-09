@@ -4,7 +4,7 @@ from src.spell import Spell
 
 class Arsenal:
 
-    def __init__(self, *, weapon=None, spell=None):
+    def __init__(self, *, weapon=Weapon(), spell=None):
         self.__weapon = weapon
         self.__spell = spell
 
