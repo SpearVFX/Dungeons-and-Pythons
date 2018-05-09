@@ -57,29 +57,29 @@ class Dungeon:
         Print the map to the console window.
     """
 
+    def __print_colorized(self, row):
+        for symbol in row:
+            if symbol == 'S' or symbol == 'H':
+                print(f'\x1b[28m{symbol}\x1b[0m', end='', flush=True)
+            elif symbol == 'G':
+                print(f'\x1b[36m{symbol}\x1b[0m', end='', flush=True)
+            elif symbol == '#':
+                print(f'\x1b[37m{symbol}\x1b[0m', end='', flush=True)
+            elif symbol == '.':
+                print(f'\x1b[30m{symbol}\x1b[0m', end='', flush=True)
+            elif symbol == 'T':
+                print(f'\x1b[33m{symbol}\x1b[0m', end='', flush=True)
+            elif symbol == 'E':
+                print(f'\x1b[31m{symbol}\x1b[0m', end='', flush=True)
+            else:
+                print(symbol, end='', flush=True)
+        print('')
+        pass
+
     def print_map(self):
         for row in self.__dungeonLayout:
             #print(''.join(row))
-            __print_colorized(''.join(row))
-        pass
-
-
-    def __print_colorized(self, row):
-        for symbol in row:
-            if symbol is 'S' or 'H':
-                print(f'\x1b[28m{symbol}\x1b[0m')
-            elif symbol is 'G':
-                print(f'\x1b[36m{symbol}\x1b[0m')
-            elif symbol is '#':
-                print(f'\x1b[37m{symbol}\x1b[0m')
-            elif symbol is '.':
-                print(f'\x1b[30m{symbol}\x1b[0m')
-            elif symbol is 'T':
-                print(f'\x1b[33m{symbol}\x1b[0m')
-            elif symbol is 'E':
-                print(f'\x1b[31m{symbol}\x1b[0m')
-            else:
-                print(symbol)
+            self.__print_colorized(''.join(row))
         pass
 
 
