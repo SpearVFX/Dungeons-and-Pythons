@@ -90,19 +90,37 @@ class Dungeon:
                                                 damage=int(line[3])))
         
     """
-        Print the map to the console window.
+        Print the symbol to the console window.
     """
+
+    def __print_colorized(self, symbol):
+        
+        if symbol == 'S' or symbol == 'H':
+            print(f'\x1b[28m{symbol}\x1b[0m', end='', flush=True)
+        elif symbol == 'G':
+            print(f'\x1b[36m{symbol}\x1b[0m', end='', flush=True)
+        elif symbol == '#':
+            print(f'\x1b[37m{symbol}\x1b[0m', end='', flush=True)
+        elif symbol == '.':
+            print(f'\x1b[30m{symbol}\x1b[0m', end='', flush=True)
+        elif symbol == 'T':
+            print(f'\x1b[33m{symbol}\x1b[0m', end='', flush=True)
+        elif symbol == 'E':
+            print(f'\x1b[31m{symbol}\x1b[0m', end='', flush=True)
+        else:
+            print(symbol, end='', flush=True)
+        pass
 
     def print_map(self):
         for row in range(len(self.__dungeonLayout)):
             for col in range(len(self.__dungeonLayout[row])):
                 if (col, row) == self.__hero.get_coords():
-                    print(HERO_TILE, end='')
+                    self.__print_colorized(HERO_TILE)
                 elif (col,row) == self.__currEnemy.get_coords():
-                    print(ENEMY_TILE,end='')
+                    self.__print_colorized(ENEMY_TILE)
 
                 else:
-                    print(self.__dungeonLayout[row][col],end='')
+                    self.__print_colorized(self.__dungeonLayout[row][col])
             print()
 
     """
@@ -194,7 +212,7 @@ class Dungeon:
                         \n{self.__hero.get_weapon()}\
                         \n{self.__hero.get_spell()}\
                         \n Input Y or N:')
-                        
+
         if command is 'Y':
             return True
 
@@ -236,7 +254,7 @@ class Dungeon:
                     self.__hero.learn(spell)
 
     """
-        Generates the name of the dir containing the next level. 
+        Generates the name of the dir containing the next level.
     """
 
     def __generate_next_level_dir_name(self):
@@ -244,21 +262,21 @@ class Dungeon:
         levelIndex = str(int(self.__fileDir[length:][:-1]) + 1)
         nextLevelDirName = (self.__fileDir[0:length]) + levelIndex + '/'
         return nextLevelDirName
-    
+
     """
         Loads the next level if there is one.
     """
 
     def __load_next_level(self):
-        nextLevelDirName = self.__generate_next_level_dir_name()        
-        
+        nextLevelDirName = self.__generate_next_level_dir_name()
+
         if os.path.exists(nextLevelDirName):
             self.open_map(fileDir=nextLevelDirName)
             self.__treasure.open_file(filePath=nextLevelDirName)
             return True
 
         return False
-    
+
     """
         Checks each tile along the spell range. 
     """
@@ -331,7 +349,6 @@ class Dungeon:
         self.__update_tile(x=currEnemyCoords[0],
                            y=currEnemyCoords[1],
                            tile=DEFAULT_TILE)
-        pdb.set_trace()
         if type(winner) is Enemy:
             self.__update_tile(x=initialEnemyCoords[0],
                                y=initialEnemyCoords[1],
