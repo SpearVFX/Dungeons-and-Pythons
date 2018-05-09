@@ -25,7 +25,7 @@ class FightStatusBar:
 
     def header_string(self):
         print('+{0:-^50}+{0:-^50}+'.format(''))
-        print('|{:^50}|{:^50}|'.format(self.hero.known_as(), "Enemy"))
+        print('|{:^50}|{:^50}|'.format(self.hero.known_as(), self.enemy.get_name()))
         print('+{0:-^50}+{0:-^50}+'.format(''))
         self.health_mana_status_bar()
         pass
