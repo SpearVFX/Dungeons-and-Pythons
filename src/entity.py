@@ -71,11 +71,13 @@ class Entity:
 
     def take_mana(self, mana=0):
         self.__currMana += self.__calculate_mana_gain(mana)
+        print(f'mana:{self.__maxMana}/{self.__currMana}')
 
     ''' Sums the healing points returned by the __calculate_health_gain method and the currentHealth. '''
 
     def take_healing(self, healingPoints=0):
         self.__currHealth += self.__calculate_health_gain(healingPoints)
+        print(f'health:{self.__maxHealth}/{self.__currHealth}')
 
     ''' Checks if the Entity is alive. '''
 

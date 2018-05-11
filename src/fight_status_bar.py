@@ -7,6 +7,7 @@ def cls():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
+
 class FightStatusBar:
     def __init__(self, hero, enemy, dungeon):
         self.hero = hero
