@@ -1,17 +1,17 @@
 {
-"weapons": [
+"weapon": [
 	{"name":"Axe", "damage":4},
 	{"name":"Sword", "damage":5},
 	{"name":"Mace", "damage":5}
 	],
 
-"spells ": [
+"spell ": [
 	{"name":"Frost bolt", "damage":15, "manaCost":"8", "range":2},
 	{"name":"Fireball", "damage":20, "manaCost":"10", "range":2},
 	{"name":"Lightning bolt", "damage":25, "manaCost":"12", "range":2}
 	],
 
-"potions":[
+"potion":[
 	{"name":"Mana", "amount":40},
 	{"name":"Health", "amount":50}
 	]
